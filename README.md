@@ -48,7 +48,7 @@ Moduł Sędziego nie stosuje sztywnej reguły "odmowa = sukces". Ocenia odpowied
 
 Dla ataków dynamicznych silnik wykorzystuje strukturę drzewiastą z przycinaniem:
 
-                [Seed / Goal]
+                      [Seed / Goal]
                             │
             ┌───────────────┼───────────────┐
             ▼               ▼               ▼
