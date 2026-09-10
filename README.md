@@ -17,7 +17,7 @@ Zaawansowane, wieloagentowe środowisko testowe (Harness) przeznaczone do automa
 ## 🏗️ Architektura Systemu
 
 System opiera się na trójcy połączonych agentów LLM:
-┌──────────────────────┐
+                  ┌──────────────────────┐
                   │    Attacker LLM      │
                   │  (Generowanie TAP)   │
                   └──────────┬───────────┘
