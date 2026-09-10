@@ -17,14 +17,13 @@ Zaawansowane, wieloagentowe środowisko testowe (Harness) przeznaczone do automa
 ## 🏗️ Architektura Systemu
 
 System opiera się na trójcy połączonych agentów LLM:
-
-              ┌──────────────────────┐
-              │    Attacker LLM      │
-              │  (Generowanie TAP)   │
-              └──────────┬───────────┘
-                         │
-                         ▼
-                         ┌──────────────────┐  Prompt Atakujący  ┌──────────────────┐
+┌──────────────────────┐
+                  │    Attacker LLM      │
+                  │  (Generowanie TAP)   │
+                  └──────────┬───────────┘
+                             │
+                             ▼
+┌──────────────────┐  Prompt Atakujący  ┌──────────────────┐
 │   Evaluator      ├───────────────────►│    Target LLM    │
 │  (Judge LLM)     │                    │ (Model Testowany)│
 │ Skala: 0 - 10    │◄───────────────────┤                  │
@@ -49,17 +48,17 @@ Moduł Sędziego nie stosuje sztywnej reguły "odmowa = sukces". Ocenia odpowied
 
 Dla ataków dynamicznych silnik wykorzystuje strukturę drzewiastą z przycinaniem:
 
-                 [Seed / Goal]
-                        │
-        ┌───────────────┼───────────────┐
-        ▼               ▼               ▼
-    [Gałąź 1]       [Gałąź 2]       [Gałąź 3]   <-- (Branching Factor: 3)
-        │               │               │
-     Score: 6        Score: 1        Score: 2    <-- (Sędzia: Skala 0-10)
-        │               X               X
-     KEEP            PRUNE           PRUNE       <-- (Pruning Threshold: <3)
-        │
-┌───────┴───────┐
-▼               ▼
-[Gałąź 1.1]    [Gałąź 1.2]           <-- (Width / Best-K: 2)
+                [Seed / Goal]
+                            │
+            ┌───────────────┼───────────────┐
+            ▼               ▼               ▼
+        [Gałąź 1]       [Gałąź 2]       [Gałąź 3]   <-- (Branching Factor: 3)
+            │               │               │
+         Score: 6        Score: 1        Score: 2    <-- (Sędzia: Skala 0-10)
+            │               X               X
+         KEEP            PRUNE           PRUNE       <-- (Pruning Threshold: <3)
+            │
+    ┌───────┴───────┐
+    ▼               ▼
+[Gałąź 1.1]    [Gałąź 1.2]                          <-- (Width / Best-K: 2)
 
