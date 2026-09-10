@@ -10,7 +10,7 @@ class LLMClient:
         self.rate_limit_delay = rate_limit_delay
         
         # Twój musisz wpisac swoj Project ID z Google Cloud Console 
-        project_id = os.getenv("GCP_PROJECT_ID", "tu wpisujesz projekt Id")
+        project_id = os.getenv("GCP_PROJECT_ID", "tu wpisz project Id")
         location = os.getenv("GCP_LOCATION", "us-central1")  
 
         self.client = genai.Client(
