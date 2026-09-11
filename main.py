@@ -6,6 +6,7 @@ from config import LLMClient
 from modules.evaluator import SecurityEvaluator
 from modules.static_engine import StaticBenchmarkEngine
 from modules.dynamic_engine import DynamicAdversarialEngine
+from modules.judge_validator import JudgeValidator
 from modules.report_generator import ReportGenerator
 
 def main():
@@ -14,14 +15,19 @@ def main():
     )
     parser.add_argument(
         "--mode",
-        choices=["static", "dynamic", "full"],
+        choices=["static", "dynamic", "full", "validate-judge"],
         default="full",
-        help="Tryb uruchomienia testu: static, dynamic lub full",
+        help="Tryb uruchomienia testu: static, dynamic, full lub validate-judge",
     )
     parser.add_argument(
         "--dataset",
         default="datasets/redteam_prompts.json",
         help="Ścieżka do zestawu danych ze statycznymi promptami",
+    )
+    parser.add_argument(
+        "--gold-set",
+        default="datasets/judge_gold_set.json",
+        help="Ścieżka do zbioru referencyjnego (Gold Set) do walidacji Sędziego",
     )
     parser.add_argument(
         "--goal",
@@ -32,6 +38,14 @@ def main():
         "--output",
         default="redteam_report.json",
         help="Ścieżka do pliku wyjściowego z raportem w formacie JSON",
+    )
+    
+    # Parametr temperatury dla Sędziego (LLM-as-a-Judge)
+    parser.add_argument(
+        "--judge-temp",
+        type=float,
+        default=0.0,
+        help="Temperatura dla wywołań Sędziego (0.0 = maksymalna deterministyczność)",
     )
     
     # Parametry konfiguracyjne dla algorytmu TAP (Tree-of-Attacks with Pruning)
@@ -61,19 +75,26 @@ def main():
     attacker_llm = LLMClient(model="gemini-2.5-flash")   # Model atakujący (Attacker)
     judge_llm = LLMClient(model="gemini-2.5-flash")      # Model oceniający (Judge)
 
-    evaluator = SecurityEvaluator(judge_client=judge_llm)
+    # Moduł Sędziego z przekazaną temperaturą
+    evaluator = SecurityEvaluator(judge_client=judge_llm, temperature=args.judge_temp)
+
+    # 1. Tryb walidacji trafności Sędziego na zbiorze Gold Set
+    if args.mode == "validate-judge":
+        validator = JudgeValidator(evaluator=evaluator)
+        validator.validate(gold_set_path=args.gold_set)
+        return
 
     static_results = None
     dynamic_results = []
 
-    # 1. Wykonanie modułu statycznego
+    # 2. Wykonanie modułu statycznego
     if args.mode in ["static", "full"]:
         static_engine = StaticBenchmarkEngine(
             target_client=target_llm, evaluator=evaluator
         )
         static_results = static_engine.run_benchmark(args.dataset)
 
-    # 2. Wykonanie modułu dynamicznego (TAP)
+    # 3. Wykonanie modułu dynamicznego (TAP)
     if args.mode in ["dynamic", "full"]:
         dynamic_engine = DynamicAdversarialEngine(
             attacker_client=attacker_llm,
@@ -86,7 +107,7 @@ def main():
         dyn_res = dynamic_engine.run_attack(goal=args.goal, max_depth=5)
         dynamic_results.append(dyn_res)
 
-    # 3. Generowanie podsumowania w konsoli i zapisu do JSON
+    # 4. Generowanie podsumowania w konsoli i zapisu do JSON
     ReportGenerator.print_summary(static_results, dynamic_results)
     ReportGenerator.save_json(args.output, static_results, dynamic_results)
 
