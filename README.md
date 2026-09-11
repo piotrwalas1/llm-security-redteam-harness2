@@ -18,7 +18,7 @@ Zaawansowane, wieloagentowe środowisko testowe (**Harness**) przeznaczone do au
 
 System opiera się na trójcy połączonych agentów LLM:
 
-```text
+
                   ┌──────────────────────┐
                   │     Attacker LLM     │
                   │   (Generowanie TAP)  │
