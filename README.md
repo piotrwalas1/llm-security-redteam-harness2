@@ -31,7 +31,7 @@ System opiera się na trójcy połączonych agentów LLM:
 │ Skala: 0 - 10    │◄───────────────────┤                  │
 └──────────────────┘  Odpowiedź Targeta  └──────────────────┘
 
-```text
+text```
 1. Attacker (Atakujący): Generuje drzewo zaawansowanych promptów adwersarialnych (jailbreak, roleplay, social engineering).
 
 2. Target (Cel): Audytowany model językowy (domyślnie gemini-2.5-flash).
