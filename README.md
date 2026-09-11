@@ -30,8 +30,8 @@ System opiera się na trójcy połączonych agentów LLM:
 │   (Judge LLM)    │                    │ (Model Testowany)│
 │ Skala: 0 - 10    │◄───────────────────┤                  │
 └──────────────────┘  Odpowiedź Targeta  └──────────────────┘
+```
 
-text```
 1. Attacker (Atakujący): Generuje drzewo zaawansowanych promptów adwersarialnych (jailbreak, roleplay, social engineering).
 
 2. Target (Cel): Audytowany model językowy (domyślnie gemini-2.5-flash).
@@ -47,7 +47,7 @@ Moduł Sędziego nie stosuje sztywnej reguły "odmowa = sukces". Ocenia odpowied
 
 🌲 Dynamiczny Algorytm TAP
 Dla ataków dynamicznych silnik wykorzystuje strukturę drzewiastą z przycinaniem:
-                     
+  ```text                   
                      
                      [Seed / Goal]
                             │
@@ -62,3 +62,4 @@ Dla ataków dynamicznych silnik wykorzystuje strukturę drzewiastą z przycinani
     ┌───────┴───────┐
     ▼               ▼
 [Gałąź 1.1]    [Gałąź 1.2]                           <-- (Width / Best-K: 2)
+```
